@@ -37,9 +37,13 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
     public RetornoDesafioDto realizarDesafioDasCartas() {
         String mensagemComOResultado = "";
         Map<String, Integer> desafioRealizado = realizarDesafio();
+
+        selecionarMaoVencedora(desafioRealizado);
+
         for (Map.Entry<String, Integer> entry : desafioRealizado.entrySet()) {
             mensagemComOResultado = (format("O vencedor da partida foi o %s com a pontuação de %d pontos.", entry.getKey(), entry.getValue()));
         }
+
         return new RetornoDesafioDto(mensagemComOResultado);
     }
 
@@ -56,14 +60,19 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
         var cartasEmbaralhadas = embaralharCartasRetiradasDoBaralho(cartasRetiradasDoBaralho);
         var arrayDeCincoSubListComCincoCartasCada = separarAsCartasEmSubListComCincoCartas(cartasEmbaralhadas);
 
-        return calcularPontuacaoDasCartasERetornarVencedor(arrayDeCincoSubListComCincoCartasCada);
+        return calcularPontuacaoDasCartas(arrayDeCincoSubListComCincoCartasCada);
     }
 
-    private RetornoPartidaCartasDto formatarRespostaComOVencedorDoDesafio(Map<String, Integer> vencedorDoDesafio, PartidaCartasDto partida) {
+    private RetornoPartidaCartasDto formatarRespostaComOVencedorDoDesafio(Map<String, Integer> todasAsMaosParticipantesDoDesafio, PartidaCartasDto partida) {
         String resultadoDaApostaDoJogador = "";
         String jogadorVencedor = "";
         int qtdPontosJogadorVencedor = 0;
-        for (Map.Entry<String, Integer> entry : vencedorDoDesafio.entrySet()) {
+
+        Map<String, Integer> todasAsMaos = todasAsMaosParticipantesDoDesafio;
+
+        selecionarMaoVencedora(todasAsMaosParticipantesDoDesafio);
+
+        for (Map.Entry<String, Integer> entry : todasAsMaosParticipantesDoDesafio.entrySet()) {
             jogadorVencedor = entry.getKey();
             qtdPontosJogadorVencedor = entry.getValue();
             if (jogadorVencedor.contains(String.valueOf(partida.getMaoDaAposta()))) {
@@ -75,10 +84,12 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
 
         String resultado = format("Olá %s!" +
                         " Como vai? Cheguei com o resultado!!!" +
+                        " Segue a pontuação completa: %s." +
                         " Você apostou na mão %d como vencedora, certo?" +
                         " %s" +
                         " O %s venceu com %d pontos!",
-                partida.getNomeJogador(), partida.getMaoDaAposta(), resultadoDaApostaDoJogador, jogadorVencedor, qtdPontosJogadorVencedor);
+                partida.getNomeJogador(), todasAsMaos, partida.getMaoDaAposta(), resultadoDaApostaDoJogador, jogadorVencedor, qtdPontosJogadorVencedor);
+
         return new RetornoPartidaCartasDto(partida.getNomeJogador(), partida.getMaoDaAposta(), resultado);
     }
 
@@ -96,7 +107,7 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
         return hands;
     }
 
-    private Map<String, Integer> calcularPontuacaoDasCartasERetornarVencedor(List<List<CartaBaralhoDto>> hands) {
+    private Map<String, Integer> calcularPontuacaoDasCartas(List<List<CartaBaralhoDto>> hands) {
         Map<String, Integer> scores = new LinkedHashMap<>();
 
         for (int i = 0; i < hands.size(); i++) {
@@ -104,10 +115,7 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
             scores.put("Jogador " + (i + 1), sum);
         }
 
-        int maxScore = Collections.max(scores.values());
-        return scores.entrySet().stream()
-                .filter(entry -> entry.getValue() == maxScore)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return scores;
     }
 
     private List<Integer> retornarValoresDasCartasComoInteiro(List<CartaBaralhoDto> cards) {
@@ -121,5 +129,12 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    private static void selecionarMaoVencedora(Map<String, Integer> todasAsMaosParticipantesDoDesafio) {
+        int maxScore = Collections.max(todasAsMaosParticipantesDoDesafio.values());
+        todasAsMaosParticipantesDoDesafio.entrySet().stream()
+                .filter(entry -> entry.getValue() == maxScore)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }
