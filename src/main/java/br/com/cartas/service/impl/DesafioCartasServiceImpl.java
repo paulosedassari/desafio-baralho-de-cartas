@@ -10,6 +10,7 @@ import br.com.cartas.dto.search.CartaBaralhoDto;
 import br.com.cartas.dto.search.CartasDoBaralhoDto;
 import br.com.cartas.service.BaralhoCartasService;
 import br.com.cartas.service.DesafioCartasService;
+import br.com.cartas.util.Constantes;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -35,13 +36,15 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
 
     @Override
     public RetornoDesafioDto realizarDesafioDasCartas() {
+
         String mensagemComOResultado = "";
         Map<String, Integer> desafioRealizado = realizarDesafio();
 
-        selecionarMaoVencedora(desafioRealizado);
+        Map<String, Integer> maoVencedora = selecionarMaoVencedora(desafioRealizado);
 
-        for (Map.Entry<String, Integer> entry : desafioRealizado.entrySet()) {
-            mensagemComOResultado = (format("O vencedor da partida foi o %s com a pontuação de %d pontos.", entry.getKey(), entry.getValue()));
+        for (Map.Entry<String, Integer> entry : maoVencedora.entrySet()) {
+            mensagemComOResultado = format(Constantes.PONTUACAO_SEM_PARTICIPANTE, desafioRealizado) +
+                    format(Constantes.VENCEDOR_DA_PARTIDA_JOGO_SEM_PARTICIPANTE, entry.getKey(), entry.getValue());
         }
 
         return new RetornoDesafioDto(mensagemComOResultado);
@@ -64,32 +67,17 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
     }
 
     private RetornoPartidaCartasDto formatarRespostaComOVencedorDoDesafio(Map<String, Integer> todasAsMaosParticipantesDoDesafio, PartidaCartasDto partida) {
+
         String resultadoDaApostaDoJogador = "";
         String jogadorVencedor = "";
         int qtdPontosJogadorVencedor = 0;
 
         Map<String, Integer> todasAsMaos = todasAsMaosParticipantesDoDesafio;
+        Map<String, Integer> maoVencedora = selecionarMaoVencedora(todasAsMaosParticipantesDoDesafio);
 
-        selecionarMaoVencedora(todasAsMaosParticipantesDoDesafio);
+        DefinirResultadoDaAposta resultadoAposta = definirResultadoEMensagemComResultadoDaAposta(maoVencedora, partida, jogadorVencedor, qtdPontosJogadorVencedor, resultadoDaApostaDoJogador);
 
-        for (Map.Entry<String, Integer> entry : todasAsMaosParticipantesDoDesafio.entrySet()) {
-            jogadorVencedor = entry.getKey();
-            qtdPontosJogadorVencedor = entry.getValue();
-            if (jogadorVencedor.contains(String.valueOf(partida.getMaoDaAposta()))) {
-                resultadoDaApostaDoJogador = "Parabéeens!!! Você acertou a mão vencedora :).";
-            } else {
-                resultadoDaApostaDoJogador = "Que pena! Você não acertou a mão vencedora :(.";
-            }
-        }
-
-        String resultado = format("Olá %s!" +
-                        " Como vai? Cheguei com o resultado!!!" +
-                        " Segue a pontuação completa: %s." +
-                        " Você apostou na mão %d como vencedora, certo?" +
-                        " %s" +
-                        " O %s venceu com %d pontos!",
-                partida.getNomeJogador(), todasAsMaos, partida.getMaoDaAposta(), resultadoDaApostaDoJogador, jogadorVencedor, qtdPontosJogadorVencedor);
-
+        String resultado = estruturarMensagemDeResultadoDoDesafio(partida, todasAsMaos, resultadoAposta.resultadoDaApostaDoJogador(), resultadoAposta.jogadorVencedor(), resultadoAposta.qtdPontosJogadorVencedor());
         return new RetornoPartidaCartasDto(partida.getNomeJogador(), partida.getMaoDaAposta(), resultado);
     }
 
@@ -131,10 +119,48 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
                 .collect(Collectors.toList());
     }
 
-    private static void selecionarMaoVencedora(Map<String, Integer> todasAsMaosParticipantesDoDesafio) {
+    private static Map<String, Integer> selecionarMaoVencedora(Map<String, Integer> todasAsMaosParticipantesDoDesafio) {
         int maxScore = Collections.max(todasAsMaosParticipantesDoDesafio.values());
-        todasAsMaosParticipantesDoDesafio.entrySet().stream()
+
+        return todasAsMaosParticipantesDoDesafio.entrySet().stream()
                 .filter(entry -> entry.getValue() == maxScore)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private static String estruturarMensagemDeResultadoDoDesafio(PartidaCartasDto partida, Map<String, Integer> todasAsMaos, String resultadoDaApostaDoJogador, String jogadorVencedor, int qtdPontosJogadorVencedor) {
+        String resultado = format("Olá %s!" +
+                        " Como vai? Cheguei com o resultado!!!" +
+                        " Segue a pontuação completa: %s." +
+                        " Você apostou na mão %d como vencedora, certo?" +
+                        " %s", partida.getNomeJogador(), todasAsMaos, partida.getMaoDaAposta(), resultadoDaApostaDoJogador);
+        if (!resultadoDaApostaDoJogador.contains("empate")) resultado += format(" O %s venceu com %d pontos!", jogadorVencedor, qtdPontosJogadorVencedor);
+        return resultado;
+    }
+
+    private static DefinirResultadoDaAposta definirResultadoEMensagemComResultadoDaAposta(Map<String, Integer> todasAsMaosParticipantesDoDesafio, PartidaCartasDto partida, String jogadorVencedor, int qtdPontosJogadorVencedor, String resultadoDaApostaDoJogador) {
+
+        for (Map.Entry<String, Integer> entry : todasAsMaosParticipantesDoDesafio.entrySet()) {
+
+            jogadorVencedor = entry.getKey();
+            qtdPontosJogadorVencedor = entry.getValue();
+
+            if (todasAsMaosParticipantesDoDesafio.size() > 1) {
+                resultadoDaApostaDoJogador = format("No entanto, nessa rodada ocorreu um empate entre os jogadores %s!", todasAsMaosParticipantesDoDesafio);
+                break;
+            }
+
+            if (jogadorVencedor.contains(String.valueOf(partida.getMaoDaAposta()))) {
+                resultadoDaApostaDoJogador = Constantes.PARABENS_ACERTOU_A_MAO_VENCEDORA;
+                break;
+            }
+
+            resultadoDaApostaDoJogador = Constantes.NAO_ACERTOU_A_MAO_VENCEDORA;
+        }
+        DefinirResultadoDaAposta resultadoAposta = new DefinirResultadoDaAposta(resultadoDaApostaDoJogador, jogadorVencedor, qtdPontosJogadorVencedor);
+        return resultadoAposta;
+    }
+
+    private record DefinirResultadoDaAposta(String resultadoDaApostaDoJogador, String jogadorVencedor,
+                                            int qtdPontosJogadorVencedor) {
     }
 }
