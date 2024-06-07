@@ -8,11 +8,16 @@ import br.com.cartas.dto.game.RetornoDesafioDto;
 import br.com.cartas.dto.game.RetornoPartidaCartasDto;
 import br.com.cartas.dto.search.CartaBaralhoDto;
 import br.com.cartas.dto.search.CartasDoBaralhoDto;
+import br.com.cartas.enums.StatusAposta;
+import br.com.cartas.model.CardDeckComJogadorEntity;
+import br.com.cartas.model.CardDeckSemJogadorEntity;
 import br.com.cartas.service.BaralhoCartasService;
 import br.com.cartas.service.DesafioCartasService;
+import br.com.cartas.service.RegistrarResultadoNaBase;
 import br.com.cartas.util.Constantes;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,9 +27,11 @@ import static java.lang.String.format;
 public class DesafioCartasServiceImpl implements DesafioCartasService {
 
     private final BaralhoCartasService baralhoCartasService;
+    private final RegistrarResultadoNaBase registrarResultadoNaBase;
 
-    public DesafioCartasServiceImpl(BaralhoCartasService baralhoCartasService) {
+    public DesafioCartasServiceImpl(BaralhoCartasService baralhoCartasService, RegistrarResultadoNaBase registrarResultadoNaBase) {
         this.baralhoCartasService = baralhoCartasService;
+        this.registrarResultadoNaBase = registrarResultadoNaBase;
     }
 
     private static final Map<String, Integer> VALORES_CARTAS_ESPECIAIS = Map.of(
@@ -41,19 +48,22 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
         Map<String, Integer> desafioRealizado = realizarDesafio();
 
         Map<String, Integer> maoVencedora = selecionarMaoVencedora(desafioRealizado);
+        String maoVencedoraAsString = "";
 
         for (Map.Entry<String, Integer> entry : maoVencedora.entrySet()) {
             mensagemComOResultado = format(Constantes.PONTUACAO_SEM_PARTICIPANTE, desafioRealizado) +
                     format(Constantes.VENCEDOR_DA_PARTIDA_JOGO_SEM_PARTICIPANTE, entry.getKey(), entry.getValue());
+            maoVencedoraAsString = entry.getKey();
         }
 
+        registrarResultadoNaBase.salvarRegistroSemJogador(new CardDeckSemJogadorEntity(null, maoVencedoraAsString, LocalDateTime.now()));
         return new RetornoDesafioDto(mensagemComOResultado);
     }
 
     @Override
     public RetornoPartidaCartasDto realizarDesafioDasCartasComParticipante(PartidaCartasDto partida) {
         Map<String, Integer> desafioRealizado = realizarDesafio();
-        return formatarRespostaComOVencedorDoDesafio(desafioRealizado, partida);
+        return formatarRespostaComOVencedorDoDesafioERegistrarJogoNaBase(desafioRealizado, partida);
     }
 
     private Map<String, Integer> realizarDesafio() {
@@ -66,7 +76,7 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
         return calcularPontuacaoDasCartas(arrayDeCincoSubListComCincoCartasCada);
     }
 
-    private RetornoPartidaCartasDto formatarRespostaComOVencedorDoDesafio(Map<String, Integer> todasAsMaosParticipantesDoDesafio, PartidaCartasDto partida) {
+    private RetornoPartidaCartasDto formatarRespostaComOVencedorDoDesafioERegistrarJogoNaBase(Map<String, Integer> todasAsMaosParticipantesDoDesafio, PartidaCartasDto partida) {
 
         String resultadoDaApostaDoJogador = "";
         String jogadorVencedor = "";
@@ -78,6 +88,8 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
         DefinirResultadoDaAposta resultadoAposta = definirResultadoEMensagemComResultadoDaAposta(maoVencedora, partida, jogadorVencedor, qtdPontosJogadorVencedor, resultadoDaApostaDoJogador);
 
         String resultado = estruturarMensagemDeResultadoDoDesafio(partida, todasAsMaos, resultadoAposta.resultadoDaApostaDoJogador(), resultadoAposta.jogadorVencedor(), resultadoAposta.qtdPontosJogadorVencedor());
+        registrarResultadoDoJogoNaBase(partida, resultado, resultadoAposta.jogadorVencedor());
+
         return new RetornoPartidaCartasDto(partida.getNomeJogador(), partida.getMaoDaAposta(), resultado);
     }
 
@@ -135,6 +147,14 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
                         " %s", partida.getNomeJogador(), todasAsMaos, partida.getMaoDaAposta(), resultadoDaApostaDoJogador);
         if (!resultadoDaApostaDoJogador.contains("empate")) resultado += format(" O %s venceu com %d pontos!", jogadorVencedor, qtdPontosJogadorVencedor);
         return resultado;
+    }
+
+    private void registrarResultadoDoJogoNaBase(PartidaCartasDto partida, String resultado, String jogadorVencedor) {
+        if (resultado.contains(Constantes.PARABENS_ACERTOU_A_MAO_VENCEDORA)) {
+            registrarResultadoNaBase.salvarRegistroComJogador(new CardDeckComJogadorEntity(null, partida.getNomeJogador(), partida.getMaoDaAposta(), StatusAposta.ACERTOU, jogadorVencedor, LocalDateTime.now()));
+        } else {
+            registrarResultadoNaBase.salvarRegistroComJogador(new CardDeckComJogadorEntity(null, partida.getNomeJogador(), partida.getMaoDaAposta(), StatusAposta.ERROU, jogadorVencedor, LocalDateTime.now()));
+        }
     }
 
     private static DefinirResultadoDaAposta definirResultadoEMensagemComResultadoDaAposta(Map<String, Integer> todasAsMaosParticipantesDoDesafio, PartidaCartasDto partida, String jogadorVencedor, int qtdPontosJogadorVencedor, String resultadoDaApostaDoJogador) {
