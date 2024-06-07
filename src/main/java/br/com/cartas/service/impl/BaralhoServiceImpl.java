@@ -5,7 +5,7 @@ import br.com.cartas.dto.create.CriarBaralhoDto;
 import br.com.cartas.dto.create.DadosBaralhoDto;
 import br.com.cartas.dto.search.CartasDoBaralhoDto;
 import br.com.cartas.exception.CardDeckException;
-import br.com.cartas.service.BaralhoCartasService;
+import br.com.cartas.service.BaralhoService;
 import br.com.cartas.util.Constantes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 import static java.lang.String.format;
 
 @Service
-public class BaralhoCartasServiceImpl implements BaralhoCartasService {
+public class BaralhoServiceImpl implements BaralhoService {
 
-    private Logger logger = LoggerFactory.getLogger(BaralhoCartasServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(BaralhoServiceImpl.class);
 
     private final CardDeck feign;
 
-    public BaralhoCartasServiceImpl(CardDeck feign) {
+    public BaralhoServiceImpl(CardDeck feign) {
         this.feign = feign;
     }
 
