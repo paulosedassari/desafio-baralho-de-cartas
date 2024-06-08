@@ -4,7 +4,7 @@ import br.com.cartas.exception.CardDeckException;
 import br.com.cartas.model.CardDeckComJogadorEntity;
 import br.com.cartas.model.CardDeckSemJogadorEntity;
 import br.com.cartas.repository.CardDeckComJogadorRepository;
-import br.com.cartas.repository.CardDeckRepository;
+import br.com.cartas.repository.CardDeckSemJogadorRepository;
 import br.com.cartas.service.RegistrarResultadoNaBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +15,11 @@ public class RegistrarResultadoNaBaseImpl implements RegistrarResultadoNaBase {
 
     private Logger logger = LoggerFactory.getLogger(BaralhoServiceImpl.class);
 
-    private final CardDeckRepository cardDeckRepository;
+    private final CardDeckSemJogadorRepository cardDeckSemJogadorRepository;
     private final CardDeckComJogadorRepository cardDeckComJogadorRepository;
 
-    public RegistrarResultadoNaBaseImpl(CardDeckRepository cardDeckRepository, CardDeckComJogadorRepository cardDeckComJogadorRepository) {
-        this.cardDeckRepository = cardDeckRepository;
+    public RegistrarResultadoNaBaseImpl(CardDeckSemJogadorRepository cardDeckSemJogadorRepository, CardDeckComJogadorRepository cardDeckComJogadorRepository) {
+        this.cardDeckSemJogadorRepository = cardDeckSemJogadorRepository;
         this.cardDeckComJogadorRepository = cardDeckComJogadorRepository;
     }
 
@@ -27,7 +27,7 @@ public class RegistrarResultadoNaBaseImpl implements RegistrarResultadoNaBase {
     public void salvarRegistroSemJogador(CardDeckSemJogadorEntity cardDeckSemJogadorEntity) {
         try {
             logger.info("Salvando registro do desafio sem jogador na base CARD_DECK.");
-            cardDeckRepository.save(cardDeckSemJogadorEntity);
+            cardDeckSemJogadorRepository.save(cardDeckSemJogadorEntity);
         } catch (Exception e) {
             throw new CardDeckException(e.getMessage(), e);
         }

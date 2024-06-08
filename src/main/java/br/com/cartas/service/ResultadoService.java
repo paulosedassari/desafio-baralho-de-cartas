@@ -1,8 +1,8 @@
 package br.com.cartas.service;
 
 import br.com.cartas.dto.game.PartidaCartasDto;
-import br.com.cartas.record.ResutaldoComJogador;
-import br.com.cartas.record.ResutaldoSemJogador;
+import br.com.cartas.dto.record.ResutaldoComJogador;
+import br.com.cartas.dto.record.ResutaldoSemJogador;
 
 import java.util.Map;
 

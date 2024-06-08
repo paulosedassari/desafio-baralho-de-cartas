@@ -1,8 +1,8 @@
 package br.com.cartas.service.impl;
 
 import br.com.cartas.dto.game.PartidaCartasDto;
-import br.com.cartas.record.ResutaldoComJogador;
-import br.com.cartas.record.ResutaldoSemJogador;
+import br.com.cartas.dto.record.ResutaldoComJogador;
+import br.com.cartas.dto.record.ResutaldoSemJogador;
 import br.com.cartas.service.ResultadoService;
 import br.com.cartas.util.Constantes;
 import org.springframework.stereotype.Service;
