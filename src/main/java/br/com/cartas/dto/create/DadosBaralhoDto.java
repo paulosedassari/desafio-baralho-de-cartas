@@ -14,4 +14,8 @@ public class DadosBaralhoDto implements Serializable {
     private String deckId;
     private int remaining;
     private Boolean shuffled;
+
+    public void setDeckId(String deckId) {
+        this.deckId = deckId;
+    }
 }
