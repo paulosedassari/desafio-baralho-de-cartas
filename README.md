@@ -31,7 +31,6 @@ e registra os dados de jogo na base de dados.
     - [Executando Localmente - Profile LOCAL](http://localhost:8080/swagger-ui/index.html)
 - Para utilização em outro ambiente deverá utilizar o IP do servidor:
   http://IP_SERVIDOR:8080/swagger-ui/index.html
-<br /><br /><br />
 
 <a name="acessandoaplicacao"></a>
 ### Acessando a aplicação
