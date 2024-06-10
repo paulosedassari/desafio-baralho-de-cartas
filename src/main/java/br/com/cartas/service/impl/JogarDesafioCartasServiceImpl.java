@@ -4,6 +4,7 @@ import br.com.cartas.dto.game.PartidaCartasDto;
 import br.com.cartas.dto.game.RetornoDesafioDto;
 import br.com.cartas.dto.game.RetornoPartidaCartasDto;
 import br.com.cartas.enums.StatusAposta;
+import br.com.cartas.exception.DadosInputIncorretoException;
 import br.com.cartas.model.CardDeckComJogadorEntity;
 import br.com.cartas.model.CardDeckSemJogadorEntity;
 import br.com.cartas.service.DesafioCartasService;
@@ -42,6 +43,9 @@ public class JogarDesafioCartasServiceImpl implements JogarDesafioCartasService 
 
     @Override
     public RetornoPartidaCartasDto jogarComParticipante(PartidaCartasDto partida) {
+
+        validarInputDaMaoDaAposta(partida);
+
         Map<String, Integer> desafioRealizado = desafioCartasService.realizarDesafio();
         RetornoPartidaCartasDto respostaFormatadaComVencedor = formatarRespotaService.formatarRespostaComOVencedorDoDesafio(desafioRealizado, partida);
         registrarResultadoDoJogoComJogadorNaBase(partida, respostaFormatadaComVencedor.getResultado(), respostaFormatadaComVencedor.getMaoVencedora());
@@ -55,5 +59,10 @@ public class JogarDesafioCartasServiceImpl implements JogarDesafioCartasService 
         } else {
             registrarResultadoNaBase.salvarRegistroComJogador(new CardDeckComJogadorEntity(null, partida.getNomeJogador(), partida.getMaoDaAposta(), StatusAposta.ERROU, jogadorVencedor, LocalDateTime.now()));
         }
+    }
+
+    private static void validarInputDaMaoDaAposta(PartidaCartasDto partida) {
+        if (!CommonsUtil.opcoesValidasParaAsMaosDasApostas().contains(partida.getMaoDaAposta()))
+            throw new DadosInputIncorretoException(Constantes.VALOR_INVALIDO_MAO_DA_APOSTA);
     }
 }
