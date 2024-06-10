@@ -15,4 +15,7 @@ public class Constantes {
     public static final String SALVANDO_REGISTRO_SEM_JOGADOR_NA_BASE_CARD_DECK = "Salvando registro do desafio sem jogador na base CARD_DECK.";
     public static final String SALVANDO_REGISTRO_COM_JOGADOR_NA_BASE_CARD_DECK_JOGADOR = "Salvando registro do desafio com jogador na base CARD_DECK_JOGADOR.";
     public static final String VALOR_INVALIDO_MAO_DA_APOSTA = "Os valores aceitos para as mãos são: 1, 2, 3 e 4. Favor, preencher com valor válido!";
+    public static final String DADOS_DE_INPUT_INVALIDOS = "Dados de input inválidos.";
+    public static final String ERRO_AO_PROCESSAR_A_OPERACAO = "Ocorreu um erro ao processar a operação.";
+    public static final String RECURSO_NAO_ENCONTRADO = "Recurso %s não encontrado.";
 }
