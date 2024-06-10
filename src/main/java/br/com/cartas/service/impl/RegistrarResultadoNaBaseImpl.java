@@ -6,6 +6,7 @@ import br.com.cartas.model.CardDeckSemJogadorEntity;
 import br.com.cartas.repository.CardDeckComJogadorRepository;
 import br.com.cartas.repository.CardDeckSemJogadorRepository;
 import br.com.cartas.service.RegistrarResultadoNaBase;
+import br.com.cartas.util.Constantes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class RegistrarResultadoNaBaseImpl implements RegistrarResultadoNaBase {
     @Override
     public void salvarRegistroSemJogador(CardDeckSemJogadorEntity cardDeckSemJogadorEntity) {
         try {
-            logger.info("Salvando registro do desafio sem jogador na base CARD_DECK.");
+            logger.info(Constantes.SALVANDO_REGISTRO_SEM_JOGADOR_NA_BASE_CARD_DECK);
             cardDeckSemJogadorRepository.save(cardDeckSemJogadorEntity);
         } catch (Exception e) {
             throw new CardDeckException(e.getMessage(), e);
@@ -36,7 +37,7 @@ public class RegistrarResultadoNaBaseImpl implements RegistrarResultadoNaBase {
     @Override
     public void salvarRegistroComJogador(CardDeckComJogadorEntity cardDeckComJogadorEntity) {
         try {
-            logger.info("Salvando registro do desafio com jogador na base CARD_DECK_JOGADOR.");
+            logger.info(Constantes.SALVANDO_REGISTRO_COM_JOGADOR_NA_BASE_CARD_DECK_JOGADOR);
             cardDeckComJogadorRepository.save(cardDeckComJogadorEntity);
         } catch (Exception e) {
             throw new CardDeckException(e.getMessage(), e);

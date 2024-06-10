@@ -2,13 +2,12 @@ package br.com.cartas.service.impl;
 
 import br.com.cartas.dto.create.CriarBaralhoDto;
 import br.com.cartas.dto.create.DadosBaralhoDto;
-import br.com.cartas.dto.game.PartidaCartasDto;
-import br.com.cartas.dto.game.RetornoDesafioDto;
-import br.com.cartas.dto.game.RetornoPartidaCartasDto;
 import br.com.cartas.dto.search.CartaBaralhoDto;
 import br.com.cartas.dto.search.CartasDoBaralhoDto;
-import br.com.cartas.service.*;
-import br.com.cartas.util.CommonsUtil;
+import br.com.cartas.exception.CardDeckException;
+import br.com.cartas.service.BaralhoService;
+import br.com.cartas.service.DesafioCartasCalculoService;
+import br.com.cartas.service.DesafioCartasService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,37 +21,25 @@ public class DesafioCartasServiceImpl implements DesafioCartasService {
     private final BaralhoService baralhoService;
 
     private final DesafioCartasCalculoService desafioCartasCalculoService;
-    private final FormatarRespotaService formatarRespotaService;
 
-    public DesafioCartasServiceImpl(BaralhoService baralhoService, RegistrarResultadoNaBase registrarResultadoNaBase, DesafioCartasCalculoService desafioCartasCalculoService, FormatarRespotaService formatarRespotaService) {
+    public DesafioCartasServiceImpl(BaralhoService baralhoService, DesafioCartasCalculoService desafioCartasCalculoService) {
         this.baralhoService = baralhoService;
         this.desafioCartasCalculoService = desafioCartasCalculoService;
-        this.formatarRespotaService = formatarRespotaService;
     }
 
     @Override
-    public RetornoDesafioDto realizarDesafioDasCartas() {
-        Map<String, Integer> desafioRealizado = realizarDesafio();
-        Map<String, Integer> maoVencedora = CommonsUtil.selecionarMaoComMaiorPontuacao(desafioRealizado);
+    public Map<String, Integer> realizarDesafio() {
+        try {
+            DadosBaralhoDto baralhoCriado = baralhoService.criarBaralho(new CriarBaralhoDto(1));
+            CartasDoBaralhoDto cartasRetiradasDoBaralho = baralhoService.retirarCartasDoBaralho(baralhoCriado.getDeckId(), 20);
 
-        String mensagemComOResultado = formatarRespotaService.formatarRespostaSemOVencedorDoDesafioERegistrarJogoNaBase(maoVencedora, desafioRealizado);
-        return new RetornoDesafioDto(mensagemComOResultado);
-    }
+            var cartasEmbaralhadas = embaralharCartasRetiradasDoBaralho(cartasRetiradasDoBaralho);
+            var arrayDeCincoSubListComCincoCartasCada = separarAsCartasEmSubListComCincoCartas(cartasEmbaralhadas);
 
-    @Override
-    public RetornoPartidaCartasDto realizarDesafioDasCartasComParticipante(PartidaCartasDto partida) {
-        Map<String, Integer> desafioRealizado = realizarDesafio();
-        return formatarRespotaService.formatarRespostaComOVencedorDoDesafioERegistrarJogoNaBase(desafioRealizado, partida);
-    }
-
-    private Map<String, Integer> realizarDesafio() {
-        DadosBaralhoDto baralhoCriado = baralhoService.criarBaralho(new CriarBaralhoDto(1));
-        CartasDoBaralhoDto cartasRetiradasDoBaralho = baralhoService.retirarCartasDoBaralho(baralhoCriado.getDeckId(), baralhoCriado.getRemaining());
-
-        var cartasEmbaralhadas = embaralharCartasRetiradasDoBaralho(cartasRetiradasDoBaralho);
-        var arrayDeCincoSubListComCincoCartasCada = separarAsCartasEmSubListComCincoCartas(cartasEmbaralhadas);
-
-        return desafioCartasCalculoService.calcularPontuacaoDasCartas(arrayDeCincoSubListComCincoCartasCada);
+            return desafioCartasCalculoService.calcularPontuacaoDasCartas(arrayDeCincoSubListComCincoCartasCada);
+        } catch (Exception e) {
+            throw new CardDeckException(e.getMessage(), e);
+        }
     }
 
     private static ArrayList<CartaBaralhoDto> embaralharCartasRetiradasDoBaralho(CartasDoBaralhoDto cartasRetiradasDoBaralho) {

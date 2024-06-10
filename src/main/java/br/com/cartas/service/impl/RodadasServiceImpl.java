@@ -20,7 +20,7 @@ public class RodadasServiceImpl implements RodadasService {
     private final CardDeckComJogadorRepository cardDeckComJogadorRepository;
     private final ModelMapper modelMapper;
 
-    public RodadasServiceImpl(CardDeckSemJogadorRepository cardDeckSemJogadorRepository, CardDeckComJogadorRepository cardDeckComJogadorRepository, ModelMapper mapper, ModelMapper modelMapper) {
+    public RodadasServiceImpl(CardDeckSemJogadorRepository cardDeckSemJogadorRepository, CardDeckComJogadorRepository cardDeckComJogadorRepository, ModelMapper modelMapper) {
         this.cardDeckSemJogadorRepository = cardDeckSemJogadorRepository;
         this.cardDeckComJogadorRepository = cardDeckComJogadorRepository;
         this.modelMapper = modelMapper;

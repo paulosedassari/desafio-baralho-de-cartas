@@ -12,4 +12,7 @@ public class Constantes {
     public static final String JOGADOR_VENCEDOR_SEM_EMPATE = "O %s venceu com %d pontos!";
     public static final String EMPATE = "empate";
     public static final String MENSAGEM_RETORNO_CONTENDO_INFORMACOES_SOBRE_RESULTADO = "Olá %s! Como vai? Cheguei com o resultado!!! Segue a pontuação completa: %s. Você apostou na mão %d como vencedora, certo? %s ";
+    public static final String SALVANDO_REGISTRO_SEM_JOGADOR_NA_BASE_CARD_DECK = "Salvando registro do desafio sem jogador na base CARD_DECK.";
+    public static final String SALVANDO_REGISTRO_COM_JOGADOR_NA_BASE_CARD_DECK_JOGADOR = "Salvando registro do desafio com jogador na base CARD_DECK_JOGADOR.";
+    public static final String VALOR_INVALIDO_MAO_DA_APOSTA = "Os valores aceitos para as mãos são: 1, 2, 3 e 4. Favor, preencher com valor válido!";
 }

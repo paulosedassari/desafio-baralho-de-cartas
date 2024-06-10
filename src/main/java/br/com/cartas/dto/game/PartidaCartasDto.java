@@ -18,9 +18,16 @@ public class PartidaCartasDto implements Serializable {
     @JsonProperty("mao_que_vai_apostar")
     private int maoDaAposta;
 
+    @JsonProperty("jogador_vencedor")
+    private String maoVencedora;
 
-    public PartidaCartasDto(String nomeJogador, int maoDaAposta) {
+    public PartidaCartasDto(String maoVencedora) {
+        this.maoVencedora = maoVencedora;
+    }
+
+    public PartidaCartasDto(String nomeJogador, int maoDaAposta, String maoVencedora) {
         this.nomeJogador = nomeJogador;
         this.maoDaAposta = maoDaAposta;
+        this.maoVencedora = maoVencedora;
     }
 }

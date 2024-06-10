@@ -18,4 +18,8 @@ public class CartasDoBaralhoDto implements Serializable {
 
     private List<CartaBaralhoDto> cards;
     private int remaining;
+
+    public void setCards(List<CartaBaralhoDto> cards) {
+        this.cards = cards;
+    }
 }

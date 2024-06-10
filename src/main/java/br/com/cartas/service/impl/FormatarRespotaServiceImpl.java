@@ -1,66 +1,86 @@
 package br.com.cartas.service.impl;
 
 import br.com.cartas.dto.game.PartidaCartasDto;
+import br.com.cartas.dto.game.RetornoDesafioDto;
 import br.com.cartas.dto.game.RetornoPartidaCartasDto;
-import br.com.cartas.enums.StatusAposta;
-import br.com.cartas.model.CardDeckComJogadorEntity;
-import br.com.cartas.model.CardDeckSemJogadorEntity;
 import br.com.cartas.dto.record.ResutaldoComJogador;
 import br.com.cartas.dto.record.ResutaldoSemJogador;
 import br.com.cartas.service.FormatarRespotaService;
-import br.com.cartas.service.RegistrarResultadoNaBase;
-import br.com.cartas.service.ResultadoService;
 import br.com.cartas.util.CommonsUtil;
 import br.com.cartas.util.Constantes;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Map;
+
+import static java.lang.String.format;
 
 @Service
 public class FormatarRespotaServiceImpl implements FormatarRespotaService {
 
-    private final RegistrarResultadoNaBase registrarResultadoNaBase;
-    private final ResultadoService resultadoService;
-
-    public FormatarRespotaServiceImpl(RegistrarResultadoNaBase registrarResultadoNaBase, ResultadoService resultadoService) {
-        this.registrarResultadoNaBase = registrarResultadoNaBase;
-        this.resultadoService = resultadoService;
+    @Override
+    public RetornoDesafioDto formatarRespostaSemOVencedorDoDesafio(Map<String, Integer> maoVencedora, Map<String, Integer> desafioRealizado) {
+        ResutaldoSemJogador resultadoSemJogador = estruturaMensagemDeResultadoDoDesafioSemJogador(maoVencedora, desafioRealizado);
+        return new RetornoDesafioDto(resultadoSemJogador.maoVencedoraAsString(), resultadoSemJogador.mensagemComOResultado());
     }
 
     @Override
-    public String formatarRespostaSemOVencedorDoDesafioERegistrarJogoNaBase(Map<String, Integer> maoVencedora, Map<String, Integer> desafioRealizado) {
+    public RetornoPartidaCartasDto formatarRespostaComOVencedorDoDesafio(Map<String, Integer> todasAsMaosParticipantesDoDesafio, PartidaCartasDto partida) {
+        Map<String, Integer> todasAsMaos = todasAsMaosParticipantesDoDesafio;
+        Map<String, Integer> maoVencedora = CommonsUtil.selecionarMaoComMaiorPontuacao(todasAsMaosParticipantesDoDesafio);
+
+        ResutaldoComJogador resultadoAposta = definirResultadoEMensagemComResultadoDaAposta(maoVencedora, partida);
+        String resultado = estruturarMensagemDeResultadoDoDesafioComJogador(partida, todasAsMaos, resultadoAposta);
+
+        return new RetornoPartidaCartasDto(partida.getNomeJogador(), partida.getMaoDaAposta(), resultadoAposta.jogadorVencedor(), resultado);
+    }
+
+    private ResutaldoSemJogador estruturaMensagemDeResultadoDoDesafioSemJogador(Map<String, Integer> maoVencedora, Map<String, Integer> desafioRealizado) {
         String mensagemComOResultado = "";
         String maoVencedoraAsString = "";
 
-        ResutaldoSemJogador resultadoSemJogador = resultadoService.estruturaMensagemDeResultadoDoDesafioSemJogador(maoVencedora, desafioRealizado, mensagemComOResultado, maoVencedoraAsString);
-
-        registrarResultadoNaBase.salvarRegistroSemJogador(new CardDeckSemJogadorEntity(null, resultadoSemJogador.maoVencedoraAsString(), LocalDateTime.now()));
-        return resultadoSemJogador.mensagemComOResultado();
+        for (Map.Entry<String, Integer> entry : maoVencedora.entrySet()) {
+            mensagemComOResultado = format(Constantes.PONTUACAO_SEM_PARTICIPANTE, desafioRealizado) +
+                    format(Constantes.VENCEDOR_DA_PARTIDA_JOGO_SEM_PARTICIPANTE, entry.getKey(), entry.getValue());
+            maoVencedoraAsString = entry.getKey();
+        }
+        ResutaldoSemJogador resultadoSemJogador = new ResutaldoSemJogador(mensagemComOResultado, maoVencedoraAsString);
+        return resultadoSemJogador;
     }
 
-    @Override
-    public RetornoPartidaCartasDto formatarRespostaComOVencedorDoDesafioERegistrarJogoNaBase(Map<String, Integer> todasAsMaosParticipantesDoDesafio, PartidaCartasDto partida) {
+    private String estruturarMensagemDeResultadoDoDesafioComJogador(PartidaCartasDto partida, Map<String, Integer> todasAsMaos, ResutaldoComJogador resultadoDaAposta) {
+        String resultado = format(Constantes.MENSAGEM_RETORNO_CONTENDO_INFORMACOES_SOBRE_RESULTADO, partida.getNomeJogador(), todasAsMaos, partida.getMaoDaAposta(), resultadoDaAposta.resultadoDaApostaDoJogador());
+
+        if (!resultadoDaAposta.resultadoDaApostaDoJogador().contains(Constantes.EMPATE)) {
+            resultado += format(Constantes.JOGADOR_VENCEDOR_SEM_EMPATE, resultadoDaAposta.jogadorVencedor(), resultadoDaAposta.qtdPontosJogadorVencedor());
+        }
+
+        return resultado;
+    }
+
+    private ResutaldoComJogador definirResultadoEMensagemComResultadoDaAposta(Map<String, Integer> todasAsMaosParticipantesDoDesafio, PartidaCartasDto partida) {
         String resultadoDaApostaDoJogador = "";
         String jogadorVencedor = "";
         int qtdPontosJogadorVencedor = 0;
 
-        Map<String, Integer> todasAsMaos = todasAsMaosParticipantesDoDesafio;
-        Map<String, Integer> maoVencedora = CommonsUtil.selecionarMaoComMaiorPontuacao(todasAsMaosParticipantesDoDesafio);
+        for (Map.Entry<String, Integer> entry : todasAsMaosParticipantesDoDesafio.entrySet()) {
 
-        ResutaldoComJogador resultadoAposta = resultadoService.definirResultadoEMensagemComResultadoDaAposta(maoVencedora, partida, jogadorVencedor, qtdPontosJogadorVencedor, resultadoDaApostaDoJogador);
+            jogadorVencedor = entry.getKey();
+            qtdPontosJogadorVencedor = entry.getValue();
 
-        String resultado = resultadoService.estruturarMensagemDeResultadoDoDesafioComJogador(partida, todasAsMaos, resultadoAposta);
-        registrarResultadoDoJogoComJogadorNaBase(partida, resultado, resultadoAposta.jogadorVencedor());
+            if (todasAsMaosParticipantesDoDesafio.size() > 1) {
+                resultadoDaApostaDoJogador = format(Constantes.OCORREU_UM_EMPATE_ENTRE_OS_JOGADORES, todasAsMaosParticipantesDoDesafio);
+                break;
+            }
 
-        return new RetornoPartidaCartasDto(partida.getNomeJogador(), partida.getMaoDaAposta(), resultado);
-    }
+            if (jogadorVencedor.contains(String.valueOf(partida.getMaoDaAposta()))) {
+                resultadoDaApostaDoJogador = Constantes.PARABENS_ACERTOU_A_MAO_VENCEDORA;
+                break;
+            }
 
-    private void registrarResultadoDoJogoComJogadorNaBase(PartidaCartasDto partida, String resultado, String jogadorVencedor) {
-        if (resultado.contains(Constantes.PARABENS_ACERTOU_A_MAO_VENCEDORA)) {
-            registrarResultadoNaBase.salvarRegistroComJogador(new CardDeckComJogadorEntity(null, partida.getNomeJogador(), partida.getMaoDaAposta(), StatusAposta.ACERTOU, jogadorVencedor, LocalDateTime.now()));
-        } else {
-            registrarResultadoNaBase.salvarRegistroComJogador(new CardDeckComJogadorEntity(null, partida.getNomeJogador(), partida.getMaoDaAposta(), StatusAposta.ERROU, jogadorVencedor, LocalDateTime.now()));
+            resultadoDaApostaDoJogador = Constantes.NAO_ACERTOU_A_MAO_VENCEDORA;
         }
+        ResutaldoComJogador resultadoAposta = new ResutaldoComJogador(resultadoDaApostaDoJogador, jogadorVencedor, qtdPontosJogadorVencedor);
+        return resultadoAposta;
     }
+
 }
