@@ -26,7 +26,7 @@ e registra os dados de jogo na base de dados.
 - Permite consultar os registros dos jogos anteriores, assim como consultar pelo nome do jogador.
 
 <a name="swagger"></a>
-### Swagger
+## Swagger
 
 - Link da interface gráfica da aplicação para o Swagger UI
     - [Executando Localmente - Profile LOCAL](http://localhost:8080/swagger-ui/index.html)
@@ -34,7 +34,7 @@ e registra os dados de jogo na base de dados.
   http://IP_SERVIDOR:8080/swagger-ui/index.html
 
 <a name="acessandoaplicacao"></a>
-### Acessando a aplicação
+## Endpoints Disponíveis no Microsserviço
 
 Verifique qual o host a app está acessivel, localmente é usado o endereço http://localhost:8080/
 
@@ -45,7 +45,7 @@ Verifique qual o host a app está acessivel, localmente é usado o endereço htt
 - /rodadas/com-jogador - Retorna todos os registros com jogador.
 
 <a name="aws"></a>
-### AWS
+## AWS
 
 O microsserviço está disponível na AWS, publicado juntamente com uma interface para facilitar a interação com a aplicação.
 
