@@ -1,0 +1,369 @@
+{
+	"info": {
+		"_postman_id": "039442f4-fbf8-4f27-8fc8-d307e708698f",
+		"name": "desafio_cartas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22926756"
+	},
+	"item": [
+		{
+			"name": "partida",
+			"item": [
+				{
+					"name": "sem-jogador",
+					"item": [
+						{
+							"name": "desafio-sem-participante-aws",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://ec2-3-80-216-220.compute-1.amazonaws.com:8080/cartas/desafio",
+									"protocol": "http",
+									"host": [
+										"ec2-3-80-216-220",
+										"compute-1",
+										"amazonaws",
+										"com"
+									],
+									"port": "8080",
+									"path": [
+										"cartas",
+										"desafio"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "desafio-sem-participante",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:8080/cartas/desafio",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"cartas",
+										"desafio"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "com-jogador",
+					"item": [
+						{
+							"name": "desafio-com-participante",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"nome_jogador\": \"Paulo Sedassari\",\r\n    \"mao_que_vai_apostar\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/cartas/desafio/partida",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"cartas",
+										"desafio",
+										"partida"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "desafio-com-participante-aws",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"nome_jogador\": \"Paulo Sedassari\",\r\n    \"mao_que_vai_apostar\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://ec2-3-80-216-220.compute-1.amazonaws.com:8080/cartas/desafio/partida",
+									"protocol": "http",
+									"host": [
+										"ec2-3-80-216-220",
+										"compute-1",
+										"amazonaws",
+										"com"
+									],
+									"port": "8080",
+									"path": [
+										"cartas",
+										"desafio",
+										"partida"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "informacoes",
+			"item": [
+				{
+					"name": "informacoes-aws",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://ec2-3-80-216-220.compute-1.amazonaws.com:8080/cartas/desafio/informacoes",
+							"protocol": "http",
+							"host": [
+								"ec2-3-80-216-220",
+								"compute-1",
+								"amazonaws",
+								"com"
+							],
+							"port": "8080",
+							"path": [
+								"cartas",
+								"desafio",
+								"informacoes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "informacoes",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/cartas/desafio/informacoes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cartas",
+								"desafio",
+								"informacoes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "consultas",
+			"item": [
+				{
+					"name": "buscar-rodadas-com-jogador-aws",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://ec2-3-80-216-220.compute-1.amazonaws.com:8080/rodadas/com-jogador",
+							"protocol": "http",
+							"host": [
+								"ec2-3-80-216-220",
+								"compute-1",
+								"amazonaws",
+								"com"
+							],
+							"port": "8080",
+							"path": [
+								"rodadas",
+								"com-jogador"
+							],
+							"query": [
+								{
+									"key": "nome",
+									"value": "Paulo Henrique",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "buscar-rodadas-com-jogador",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/rodadas/com-jogador",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"rodadas",
+								"com-jogador"
+							],
+							"query": [
+								{
+									"key": "nome",
+									"value": "Paulo Henrique",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "buscar-rodadas-com-nome-jogador",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/rodadas/com-jogador?nome=Paulo Sedassari",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"rodadas",
+								"com-jogador"
+							],
+							"query": [
+								{
+									"key": "nome",
+									"value": "Paulo Sedassari"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "buscar-rodadas-com-nome-jogador-aws",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://ec2-3-80-216-220.compute-1.amazonaws.com:8080/rodadas/com-jogador?nome=Paulo Sedassari",
+							"protocol": "http",
+							"host": [
+								"ec2-3-80-216-220",
+								"compute-1",
+								"amazonaws",
+								"com"
+							],
+							"port": "8080",
+							"path": [
+								"rodadas",
+								"com-jogador"
+							],
+							"query": [
+								{
+									"key": "nome",
+									"value": "Paulo Sedassari"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "buscar-rodadas-sem-jogador-aws",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://ec2-3-80-216-220.compute-1.amazonaws.com:8080/rodadas/sem-jogador",
+							"protocol": "http",
+							"host": [
+								"ec2-3-80-216-220",
+								"compute-1",
+								"amazonaws",
+								"com"
+							],
+							"port": "8080",
+							"path": [
+								"rodadas",
+								"sem-jogador"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "buscar-rodadas-sem-jogador",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/rodadas/sem-jogador",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"rodadas",
+								"sem-jogador"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
