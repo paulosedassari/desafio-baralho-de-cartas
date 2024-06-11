@@ -1,6 +1,7 @@
 package br.com.cartas.controller.openapi;
 
 import br.com.cartas.dto.InformacoesDesafioDto;
+import br.com.cartas.dto.error.PadraoErroDto;
 import br.com.cartas.dto.game.PartidaCartasDto;
 import br.com.cartas.dto.game.RetornoDesafioDto;
 import br.com.cartas.dto.game.RetornoPartidaCartasDto;
@@ -21,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
                 @Content(mediaType = "application/json", schema = @Schema(implementation = RetornoDesafioDto.class))
         }),
         @ApiResponse(responseCode = "404", description = "Recurso não encontrado.", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = RetornoDesafioDto.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = PadraoErroDto.class))
         }),
         @ApiResponse(responseCode = "500", description = "Erro interno no Servidor.", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = RetornoDesafioDto.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = PadraoErroDto.class))
         })
 })
 public interface DesafioCartasOpenapi {

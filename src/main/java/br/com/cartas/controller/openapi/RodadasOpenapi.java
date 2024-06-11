@@ -1,6 +1,7 @@
 package br.com.cartas.controller.openapi;
 
 import br.com.cartas.dto.RodadasComJogadorDto;
+import br.com.cartas.dto.error.PadraoErroDto;
 import br.com.cartas.dto.game.RetornoDesafioDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,13 +19,13 @@ import java.util.List;
 @Tag(name = "Rodadas do Desafio Cartas")
 @ApiResponses(value ={
         @ApiResponse(responseCode = "200", description = "Consulta efetuada com sucesso.", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = RetornoDesafioDto.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = RodadasComJogadorDto.class))
         }),
         @ApiResponse(responseCode = "404", description = "Recurso não encontrado.", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = RetornoDesafioDto.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = PadraoErroDto.class))
         }),
         @ApiResponse(responseCode = "500", description = "Erro interno no Servidor.", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = RetornoDesafioDto.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = PadraoErroDto.class))
         })
 })
 @RequestMapping("/rodadas")
