@@ -1,0 +1,201 @@
+openapi: 3.0.1
+info:
+  title: Desafio das Cartas
+  description: Essa API fornece os recursos para o desafio das cartas.
+  version: "0.0.1-SNAPSHOT"
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /cartas/desafio/partida:
+    post:
+      tags:
+        - Desafio Cartas
+      summary: Jogar Desafio das Cartas com Jogador.
+      operationId: jogarJuntoDesafioDasCartas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartidaCartasDto'
+        required: true
+      responses:
+        '200':
+          description: Desafio realizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetornoDesafioDto'
+        '404':
+          description: Recurso não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PadraoErroDto'
+        '500':
+          description: Erro interno no Servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PadraoErroDto'
+  /rodadas/sem-jogador:
+    get:
+      tags:
+        - Rodadas do Desafio Cartas
+      summary: Consultar todos os registros sem jogador.
+      operationId: obterTodosOsRegistrosSemJogador
+      responses:
+        '200':
+          description: Consulta efetuada com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RodadasComJogadorDto'
+        '404':
+          description: Recurso não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PadraoErroDto'
+        '500':
+          description: Erro interno no Servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PadraoErroDto'
+  /rodadas/com-jogador:
+    get:
+      tags:
+        - Rodadas do Desafio Cartas
+      summary: Consultar todos os registros com jogador.
+      operationId: obterTodosOsRegistrosComJogador
+      parameters:
+        - name: nome
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Consulta efetuada com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RodadasComJogadorDto'
+        '404':
+          description: Recurso não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PadraoErroDto'
+        '500':
+          description: Erro interno no Servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PadraoErroDto'
+  /cartas/desafio:
+    get:
+      tags:
+        - Desafio Cartas
+      summary: Jogar Desafio das Cartas sem Jogador.
+      operationId: jogarDesafioDasCartas
+      responses:
+        '200':
+          description: Desafio realizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetornoDesafioDto'
+        '404':
+          description: Recurso não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PadraoErroDto'
+        '500':
+          description: Erro interno no Servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PadraoErroDto'
+  /cartas/desafio/informacoes:
+    get:
+      tags:
+        - Desafio Cartas
+      summary: Retorna informações sobre a API.
+      operationId: retornarInformacoesSobreODesafio
+      responses:
+        '200':
+          description: Desafio realizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetornoDesafioDto'
+        '404':
+          description: Recurso não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PadraoErroDto'
+        '500':
+          description: Erro interno no Servidor.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PadraoErroDto'
+components:
+  schemas:
+    PartidaCartasDto:
+      type: object
+      properties:
+        nome_jogador:
+          type: string
+        mao_que_vai_apostar:
+          type: integer
+          format: int32
+        jogador_vencedor:
+          type: string
+    ErroDto:
+      type: object
+      properties:
+        codigo:
+          type: integer
+          format: int32
+        mensagem:
+          type: string
+        detalhes:
+          type: string
+    PadraoErroDto:
+      type: object
+      properties:
+        erro:
+          $ref: '#/components/schemas/ErroDto'
+    RetornoDesafioDto:
+      type: object
+      properties:
+        jogador_vencedor:
+          type: string
+        resultado:
+          type: string
+    RodadasComJogadorDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        nome_jogador:
+          type: string
+        mao_da_aposta:
+          type: integer
+          format: int32
+        mao_vencedora:
+          type: string
+        acerto:
+          type: string
+          enum:
+            - ACERTOU
+            - ERROU
+        data_jogo:
+          type: string
+          format: date-time

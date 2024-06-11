@@ -1,17 +1,17 @@
 package br.com.cartas.controller;
 
+import br.com.cartas.controller.openapi.RodadasOpenapi;
 import br.com.cartas.dto.RodadasComJogadorDto;
-import br.com.cartas.dto.RodadasDto;
 import br.com.cartas.service.RodadasService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/rodadas")
-public class RodadasController {
+public class RodadasController implements RodadasOpenapi {
 
     private final RodadasService rodadasService;
 
@@ -19,13 +19,13 @@ public class RodadasController {
         this.rodadasService = rodadasService;
     }
 
-    @GetMapping("/sem-jogador")
+    @Override
     public ResponseEntity<List<RodadasComJogadorDto>> obterTodosOsRegistrosSemJogador() {
         List<RodadasComJogadorDto> rodadasDtos = rodadasService.obterOsRegistrosSemJogador();
         return ResponseEntity.status(HttpStatus.OK).body(rodadasDtos);
     }
 
-    @GetMapping("/com-jogador")
+    @Override
     public ResponseEntity<List<RodadasComJogadorDto>> obterTodosOsRegistrosComJogador(@RequestParam(value = "nome", required = false) String nome) {
         return ResponseEntity.status(HttpStatus.OK).body(rodadasService.obterOsRegistrosComJogador(nome));
     }
