@@ -12,9 +12,10 @@ e registra os dados de jogo na base de dados.
 
 ### ÍNDICE
 
-1. [ Principais caracterísitas e responsabilidades deste microsserviço ](#principaisCaracteristicasResponsabilidade)
+1. [ Principais caracterísitas e responsabilidades deste Microsserviço ](#principaisCaracteristicasResponsabilidade)
 2. [ Swagger ](#swagger)
-3. [ Acessando a aplicação ](#acessandoaplicacao)
+3. [ Endpoints Disponíveis no Microsserviço ](#acessandoaplicacao)
+4. [ Acessando a aplicação na AWS ](#aws)
     <br /><br /><br />
 
 <a name="principaisCaracteristicasResponsabilidade"></a>
@@ -42,3 +43,11 @@ Verifique qual o host a app está acessivel, localmente é usado o endereço htt
 - /cartas/desafio/partida - Realiza o desafio com jogador.
 - /rodadas/sem-jogador - Retorna todos os registros sem jogador.
 - /rodadas/com-jogador - Retorna todos os registros com jogador.
+
+<a name="aws"></a>
+### AWS
+
+O microsserviço está disponível na AWS, publicado juntamente com uma interface para facilitar a interação com a aplicação.
+
+- Link: http://ec2-3-80-216-220.compute-1.amazonaws.com/#
+- As requisições estão disponíveis na pasta /collection na raiz do srv.
